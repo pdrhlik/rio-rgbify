@@ -29,7 +29,8 @@ def data_to_rgb(data, baseval, interval, round_digits=0):
     data = data.astype(np.float64)
     data -= baseval
     data /= interval
-
+    # This is a patch from https://github.com/mapbox/rio-rgbify/issues/38 that should fix nodata issues around tif extent borders
+    data = np.nan_to_num(data, True, baseval / interval)
     data = np.around(data / 2**round_digits) * 2**round_digits
 
     rows, cols = data.shape
