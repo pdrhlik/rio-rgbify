@@ -10,6 +10,7 @@ from rasterio.rio.options import creation_options
 
 from rio_rgbify.encoders import data_to_rgb
 from rio_rgbify.mbtiler import RGBTiler
+from rio_rgbify.pmtiler import RGBTilerPMTiles
 
 
 def _rgb_worker(data, window, ij, g_args):
@@ -123,6 +124,36 @@ def rgbify(
                 )
 
         with RGBTiler(
+            src_path,
+            dst_path,
+            interval=interval,
+            base_val=base_val,
+            round_digits=round_digits,
+            format=format,
+            bounding_tile=bounding_tile,
+            max_z=max_z,
+            min_z=min_z,
+        ) as tiler:
+            tiler.run(workers)
+
+    elif dst_path.split(".")[-1].lower() == "pmtiles":
+        if min_z is None or max_z is None:
+            raise ValueError("Zoom range must be provided for pmtiles output")
+
+        if max_z < min_z:
+            raise ValueError(
+                "Max zoom {0} must be greater than min zoom {1}".format(max_z, min_z)
+            )
+
+        if bounding_tile is not None:
+            try:
+                bounding_tile = json.loads(bounding_tile)
+            except Exception:
+                raise TypeError(
+                    "Bounding tile of {0} is not valid".format(bounding_tile)
+                )
+
+        with RGBTilerPMTiles(
             src_path,
             dst_path,
             interval=interval,

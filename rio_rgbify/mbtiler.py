@@ -283,7 +283,7 @@ class RGBTiler:
                 "{0} is not a supported filetype!".format(kwargs["format"])
             )
 
-        # global kwargs not used if output  is webp
+        # global kwargs not used if output is webp
         self.global_args = {
             "kwargs": {
                 "driver": "PNG",
