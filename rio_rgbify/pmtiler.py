@@ -1,8 +1,6 @@
 from __future__ import with_statement, division
 
-import os
 import sys
-import math
 import traceback
 import itertools
 import mercantile
@@ -159,7 +157,6 @@ class RGBTilerPMTiles:
         }
 
     def __enter__(self):
-        # Initialize PMTiles writer
         self.file_handle = open(self.outpath, "wb")
         self.pm_writer = Writer(self.file_handle)
         return self
@@ -188,14 +185,20 @@ class RGBTilerPMTiles:
         for tile, contents in self.pool.imap_unordered(self.run_function, tiles):
             x, y, z = tile
             tileid = zxy_to_tileid(z, x, y)
-            self.pm_writer.write_tile(tileid, contents)
+            self.pm_writer.write_tile(tileid, bytes(contents))
 
-        # These PMtiles headers are
         header = {
             "tile_type": self.tile_type,
             "tile_compression": Compression.NONE,
             "min_zoom": self.min_z,
-            "max_zoom": self.max_z
+            "max_zoom": self.max_z,
+            "min_lon_e7": int(bbox[0] * 10000000),
+            "min_lat_e7": int(bbox[1] * 10000000),
+            "max_lon_e7": int(bbox[2] * 10000000),
+            "max_lat_e7": int(bbox[3] * 10000000),
+            "center_zoom": self.min_z,
+            "center_lon_e7": int((bbox[0] + bbox[2]) / 2 * 10000000),
+            "center_lat_e7": int((bbox[1] + bbox[3]) / 2 * 10000000),
         }
 
         # TODO: pass metadata

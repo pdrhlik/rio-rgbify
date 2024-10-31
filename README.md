@@ -14,26 +14,10 @@ cd rio-rgbify
 pip install -e '.[test]'
 ```
 
-### Install on MacOS with an externally managed environment (using pipx)
-
-Install `pipx` first
+### Install from GitHub
 ```bash
-brew install pipx
+pip install git+https://github.com/pdrhlik/rio-rgbify.git#egg=rio-rgbify
 ```
-
-Then you can install the package.
-```bash
-# Uninstall a previously installed version
-pipx uninstall rio-rgbify
-
-# Install the library using the current code
-pipx install -e '.[test]' --include-deps
-
-# Inject pmtiles package to the environment
-pipx inject rio-rgbify pmtiles
-```
-
-There must definitely be a better way to handle this but I don't know much about Python enviroments and packages so I ended up doing this to make it work after some trial and error.
 
 ## CLI usage
 
